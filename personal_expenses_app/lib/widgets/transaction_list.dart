@@ -44,7 +44,9 @@ class TransactionList extends StatelessWidget {
         : ListView(
             children: transactions.map((eachTx) {
               return TransactionItem(
-                transaction: transaction,
+                // key: UniqueKey(), gera uma key diferente em todo o rebuild
+                key: ValueKey(eachTx.id), //essa chama gera um valor unico
+                transaction: eachTx,
                 deleteTx: deleteTx,
               );
             }).toList(),

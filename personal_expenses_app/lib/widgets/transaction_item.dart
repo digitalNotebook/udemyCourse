@@ -24,6 +24,7 @@ class _TransactionItemState extends State<TransactionItem> {
 
   @override
   void initState() {
+    //usamos este range de cores para verificar o problema com a lista
     const avalaibleColors = [
       Colors.black,
       Colors.blue,
@@ -42,6 +43,7 @@ class _TransactionItemState extends State<TransactionItem> {
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 7),
       child: ListTile(
         leading: CircleAvatar(
+          backgroundColor: _bgColor,
           radius: 30,
           child: Padding(
             padding: const EdgeInsets.all(6),
