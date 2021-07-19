@@ -63,7 +63,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+//esse mixin WidgetsBindingObserver sempre é add em uma State Class
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransactions = [
     Transaction(
       id: 't1',
@@ -80,6 +81,27 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   bool _showChart = false;
+
+  //adicionamos um listener para toda vez que nosso AppState mudar
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  //esse método será chamado quando nosso app state mudar
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
+
+  /*limpamos o listener acima da memória quando nossa widget não for mais necessária
+  para evitar memory leaks
+  senão utilizarmos isso, nosso listener continua ativo, mesmo quando a widget não estiver
+  em memória */
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
