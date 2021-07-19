@@ -91,7 +91,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   //esse método será chamado quando nosso app state mudar
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {}
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
 
   /*limpamos o listener acima da memória quando nossa widget não for mais necessária
   para evitar memory leaks
