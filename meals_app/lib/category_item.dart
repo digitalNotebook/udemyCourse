@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:meals_app/category_meals_screen.dart';
 
 class CategoryItem extends StatelessWidget {
   final String title;
   final Color color;
+  final String id;
 
-  CategoryItem.titleAndColor(this.title, this.color);
+  CategoryItem(this.id, this.title, this.color);
 
   void selectCategory(BuildContext ctx) {
     //classe do Flutter que permite navegar entre as telas
-    //Navigator.of(ctx).push();
+    //colocamos a tela da categoria selecionada no topo da stack
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return CategoryMealsScreen(this.id, this.title);
+        },
+      ),
+    );
   }
 
   @override
