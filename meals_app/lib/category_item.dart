@@ -11,12 +11,20 @@ class CategoryItem extends StatelessWidget {
   void selectCategory(BuildContext ctx) {
     //classe do Flutter que permite navegar entre as telas
     //colocamos a tela da categoria selecionada no topo da stack
-    Navigator.of(ctx).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return CategoryMealsScreen(this.id, this.title);
-        },
-      ),
+    // Navigator.of(ctx).push(
+    //   cria o Material Page Route on the fly
+    //   MaterialPageRoute(
+    //     builder: (_) {
+    //       return CategoryMealsScreen(this.id, this.title);
+    //     },
+    //   ),
+    // );
+
+    //Vamos usar essa nova forma para passar informações entre as telas
+    //baseado na rota que criamos em main.dart
+    Navigator.of(ctx).pushNamed(
+      CategoryMealsScreen.routeName,
+      arguments: {'id': id, 'title': title},
     );
   }
 
