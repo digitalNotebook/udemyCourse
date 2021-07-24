@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../dummy_data.dart';
+import '../widgets/meal_item.dart';
 
 class CategoryMealsScreen extends StatelessWidget {
   //Vamos utilizar named routes para passar informações
@@ -33,7 +34,14 @@ class CategoryMealsScreen extends StatelessWidget {
         //baseado na lista filtrada acima, exibimos as receitas da categoria
         child: ListView.builder(
           itemBuilder: (ctx, index) {
-            return Text(categoriesMeal[index].title);
+            return MealItem(
+              id: categoriesMeal[index].id,
+              title: categoriesMeal[index].title,
+              imageUrl: categoriesMeal[index].imageUrl,
+              duration: categoriesMeal[index].duration,
+              complexity: categoriesMeal[index].complexity,
+              affordability: categoriesMeal[index].affordability,
+            );
           },
           itemCount: categoriesMeal.length,
         ),
