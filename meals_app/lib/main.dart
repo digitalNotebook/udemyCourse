@@ -42,6 +42,18 @@ class MyApp extends StatelessWidget {
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
       },
+      //é acionada quando usamos pushNamed, mas o Flutter não acha na tabela acima
+      // onGenerateRoute: (settings) {
+      //   if(settings.name == '/rota-url'){
+      //     return some MaterialPageRoute(builder: builder)
+      //   }
+      //   //devemos retornar uma rota
+      // return MaterialPageRoute(builder: (ctx) => CategoryMealsScreen());
+      // },
+      //usada para error handling
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (ctx) => CategoryMealsScreen());
+      },
     );
   }
 }
