@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './screens/categories_screen.dart';
 import './screens/category_meals_screen.dart';
 import './screens/meal_detail_screen.dart';
+import 'screens/tab_screen_bottom.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/', //o padrão é /
       //home: CategoriesScreen(),
       routes: {
-        '/': (ctx) => CategoriesScreen(),
+        '/': (ctx) => TabsScreen(),
         //rota definida como um static const
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
       // },
       //usada para error handling
       onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (ctx) => CategoryMealsScreen());
+        return MaterialPageRoute(builder: (ctx) => CategoriesScreen());
       },
     );
   }
