@@ -88,6 +88,13 @@ class MealDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.delete),
+        onPressed: () {
+          //retornamos o mealId, mesmo que a tela seja fechada que no caso será null
+          Navigator.of(context).pop(mealId);
+        },
+      ),
     );
   }
 }
