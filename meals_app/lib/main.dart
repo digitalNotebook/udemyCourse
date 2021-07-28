@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './screens/categories_screen.dart';
 import './screens/category_meals_screen.dart';
 import './screens/meal_detail_screen.dart';
+import './screens/filters_screen.dart';
 import 'screens/tab_screen_bottom.dart';
 
 void main() {
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         //rota definida como um static const
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        FiltersScreen.routeName: (ctx) => FiltersScreen(),
       },
       //é acionada quando usamos pushNamed, mas o Flutter não acha na tabela acima
       // onGenerateRoute: (settings) {
