@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:meals_app/widgets/main_drawer.dart';
 
 class FiltersScreen extends StatefulWidget {
-  const FiltersScreen({Key? key}) : super(key: key);
-
   static const routeName = '/filters';
+
+  final Function filtersHandler;
+  final Map<String, bool> currentFilters;
+
+  FiltersScreen(this.currentFilters, this.filtersHandler);
 
   @override
   _FiltersScreenState createState() => _FiltersScreenState();
@@ -18,6 +21,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
   @override
   void initState() {
+    _isGlutenFree = widget.currentFilters['gluten'] as bool;
+    _isVegan = widget.currentFilters['vegan'] as bool;
+    _isLactoseFree = widget.currentFilters['lactose'] as bool;
+    _isVegetarian = widget.currentFilters['vegetarian'] as bool;
     super.initState();
   }
 
@@ -40,6 +47,21 @@ class _FiltersScreenState extends State<FiltersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              final selectedFilters = {
+                'gluten': _isGlutenFree,
+                'vegan': _isVegan,
+                'vegetarian': _isVegetarian,
+                'lactose': _isLactoseFree,
+              };
+
+              widget.filtersHandler(selectedFilters);
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
         title: Text('Filters'),
       ),
       drawer: MainDrawer(),

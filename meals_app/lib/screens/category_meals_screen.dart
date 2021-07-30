@@ -14,6 +14,10 @@ class CategoryMealsScreen extends StatefulWidget {
   //define o nome da rota e podemos chamar sem instanciar a classe
   static const routeName = '/category-meals';
 
+  final List<Meal> availableMeals;
+
+  CategoryMealsScreen(this.availableMeals);
+
   @override
   _CategoryMealsScreenState createState() => _CategoryMealsScreenState();
 }
@@ -39,7 +43,7 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
       final id = routeArgs['id'];
 
       //Vamos criar uma lista filtrada para passar ao ListView.builder
-      displayedList = DUMMY_MEALS.where((meal) {
+      displayedList = widget.availableMeals.where((meal) {
         return meal.categories.contains(id);
       }).toList();
       _loadInitialData = true;

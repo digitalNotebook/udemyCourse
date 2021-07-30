@@ -5,13 +5,55 @@ import './screens/category_meals_screen.dart';
 import './screens/meal_detail_screen.dart';
 import './screens/filters_screen.dart';
 import 'screens/tab_screen_bottom.dart';
+import './dummy_data.dart';
+import './models/meals.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  //criamos esse mapa, poderia ser um model
+  var _filters = {
+    'gluten': false,
+    'vegan': false,
+    'vegetarian': false,
+    'lactose': false,
+  };
+
+  //forwardamos essa lista para a tela de categorias
+  List<Meal> _availableMeals = DUMMY_MEALS;
+
+  //passamos um pointer deste método para o salvar da tela de filtros
+  void _setFilters(Map<String, bool> filtersData) {
+    setState(() {
+      _filters = filtersData;
+
+      //fazemos o filtro de acordo com o que foi selecionado
+      _availableMeals = DUMMY_MEALS.where((meal) {
+        if (_filters['gluten'] as bool && !meal.isGlutenFree) {
+          return false;
+        }
+        if (_filters['vegan'] as bool && !meal.isVegan) {
+          return false;
+        }
+        if (_filters['vegetarian'] as bool && !meal.isVegetarian) {
+          return false;
+        }
+        if (_filters['lactose'] as bool && !meal.isLactoseFree) {
+          return false;
+        }
+        return true;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,9 +83,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (ctx) => TabsScreen(),
         //rota definida como um static const
-        CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
+
+        CategoryMealsScreen.routeName: (ctx) =>
+            CategoryMealsScreen(_availableMeals),
         MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
-        FiltersScreen.routeName: (ctx) => FiltersScreen(),
+        FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       //é acionada quando usamos pushNamed, mas o Flutter não acha na tabela acima
       // onGenerateRoute: (settings) {
