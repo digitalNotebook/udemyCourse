@@ -13,7 +13,7 @@ class FiltersScreen extends StatefulWidget {
 class _FiltersScreenState extends State<FiltersScreen> {
   var _isGlutenFree = false;
   var _isVegan = false;
-  var _isVegatarian = false;
+  var _isVegetarian = false;
   var _isLactoseFree = false;
 
   @override
@@ -21,20 +21,20 @@ class _FiltersScreenState extends State<FiltersScreen> {
     super.initState();
   }
 
-  // Widget _buildSwitchListTile(
-  //   String title,
-  //   String description,
-  //   bool currentValue,
-  //   Function updateValue,
-  // ) {
-  //   print('Estou aqui');
-  //   return SwitchListTile(
-  //     title: Text(title),
-  //     subtitle: Text(description),
-  //     value: currentValue,
-  //     onChanged: updateValue,
-  //   );
-  // }
+  Widget _buildSwitchListTile(
+    String title,
+    String description,
+    bool currentValue,
+    Function updateValue,
+  ) {
+    return SwitchListTile(
+      title: Text(title),
+      subtitle: Text(description),
+      value: currentValue,
+      onChanged: updateValue as void Function(
+          bool), //feita essa conversão para o dart reconhecer a referencia
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,22 +55,64 @@ class _FiltersScreenState extends State<FiltersScreen> {
           Expanded(
             child: ListView(
               children: [
-                SwitchListTile(
-                  title: Text('Gluten-Free'),
-                  subtitle: Text('Only include gluten-free meals.'),
-                  value: _isGlutenFree,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _isGlutenFree = newValue;
-                    });
+                // SwitchListTile(
+                //   title: Text('Gluten-Free'),
+                //   subtitle: Text('Only include gluten-free meals.'),
+                //   value: _isGlutenFree,
+                //   onChanged: (newValue) {
+                //     setState(() {
+                //       _isGlutenFree = newValue;
+                //     });
+                //   },
+                // ),
+                _buildSwitchListTile(
+                  'Gluten-Free',
+                  'Only include gluten-free meals.',
+                  _isGlutenFree,
+                  (value) {
+                    setState(
+                      () {
+                        _isGlutenFree = value;
+                      },
+                    );
                   },
                 ),
-                // _buildSwitchListTile('Gluten-Free',
-                //     'Only include gluten-free meals.', _isGlutenFree, (value) {
-                //   setState(() {
-                //     _isGlutenFree = value;
-                //   });
-                // })
+                _buildSwitchListTile(
+                  'Lactose-Free',
+                  'Only include lactose-free meals.',
+                  _isLactoseFree,
+                  (newValue) {
+                    setState(
+                      () {
+                        _isLactoseFree = newValue;
+                      },
+                    );
+                  },
+                ),
+                _buildSwitchListTile(
+                  'Vegan-Free',
+                  'Only include vegan-free meals.',
+                  _isVegan,
+                  (newValue) {
+                    setState(
+                      () {
+                        _isVegan = newValue;
+                      },
+                    );
+                  },
+                ),
+                _buildSwitchListTile(
+                  'Vegetarian-Free',
+                  'Only include vegetarian-free meals.',
+                  _isVegetarian,
+                  (newValue) {
+                    setState(
+                      () {
+                        _isVegetarian = newValue;
+                      },
+                    );
+                  },
+                )
               ],
             ),
           )
