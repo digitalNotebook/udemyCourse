@@ -10,7 +10,7 @@ class MealItem extends StatelessWidget {
   final int duration;
   final Complexity complexity;
   final Affordability affordability;
-  final Function removeItem;
+  // final Function removeItem;
 
   MealItem({
     required this.id,
@@ -19,7 +19,7 @@ class MealItem extends StatelessWidget {
     required this.duration,
     required this.complexity,
     required this.affordability,
-    required this.removeItem,
+    // required this.removeItem,
   });
 
   String get complexityText {
@@ -65,7 +65,8 @@ class MealItem extends StatelessWidget {
       (result) {
         if (result != null) {
           //recuperamos o parametro mealId e forwardamos para a tela anterior
-          removeItem(result);
+          //colocamos o icone de favoritos no lugar da lixeira
+          // removeItem(result);
         }
       },
     );

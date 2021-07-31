@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import './categories_screen.dart';
 import './favorites_screen.dart';
 import '../widgets/main_drawer.dart';
+import '../models/meals.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({Key? key}) : super(key: key);
+  final List<Meal> favoritesMeals;
+
+  TabsScreen(this.favoritesMeals);
 
   @override
   _TabsScreenState createState() => _TabsScreenState();
@@ -13,16 +16,22 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   //Lista de widgets que serão exibidas
-  final List<Map<String, dynamic>> _pages = [
-    {
-      'page': CategoriesScreen(),
-      'title': 'Categories',
-    },
-    {
-      'page': FavoriteScreen(),
-      'title': 'Favorites',
-    },
-  ];
+  late final List<Map<String, dynamic>> _pages;
+
+  @override
+  void initState() {
+    _pages = [
+      {
+        'page': CategoriesScreen(),
+        'title': 'Categories',
+      },
+      {
+        'page': FavoriteScreen(widget.favoritesMeals),
+        'title': 'Favorites',
+      },
+    ];
+    super.initState();
+  }
 
   //qual tela iremos usar
   int _selectedPageIndex = 0;

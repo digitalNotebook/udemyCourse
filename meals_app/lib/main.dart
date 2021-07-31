@@ -29,6 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   //forwardamos essa lista para a tela de categorias
   List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _favoritesMeals = [];
 
   //passamos um pointer deste método para o salvar da tela de filtros
   void _setFilters(Map<String, bool> filtersData) {
@@ -52,6 +53,36 @@ class _MyAppState extends State<MyApp> {
         return true;
       }).toList();
     });
+  }
+
+  //vamos gerenciar o toggle dos favoritos aqui
+  //porém iremos aprender uma forma mais elegante
+  //de realizar o state managment
+  void _toggleFavorite(String mealId) {
+    //procuramos na lista de favoritos se aquela id existe
+    //caso não encontre o resultado será -1
+    var existingIndex = _favoritesMeals.indexWhere((meal) => meal.id == mealId);
+
+    //encontramos um favorito, vamos removê-lo e atualizar a tela
+    if (existingIndex >= 0) {
+      setState(
+        () {
+          _favoritesMeals.removeAt(existingIndex);
+        },
+      );
+    } else {
+      setState(
+        () {
+          _favoritesMeals
+              .add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+        },
+      );
+    }
+  }
+
+  //olhamos todos os elementos da lista e retornamos true/false a partir da comparação
+  bool _isFavorite(String id) {
+    return _favoritesMeals.any((element) => element.id == id);
   }
 
   @override
@@ -81,12 +112,13 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/', //o padrão é /
       //home: CategoriesScreen(),
       routes: {
-        '/': (ctx) => TabsScreen(),
+        '/': (ctx) => TabsScreen(_favoritesMeals),
         //rota definida como um static const
 
         CategoryMealsScreen.routeName: (ctx) =>
             CategoryMealsScreen(_availableMeals),
-        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        MealDetailScreen.routeName: (ctx) =>
+            MealDetailScreen(_toggleFavorite, _isFavorite),
         FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       //é acionada quando usamos pushNamed, mas o Flutter não acha na tabela acima

@@ -21,6 +21,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
   @override
   void initState() {
+    //iniciamos dessa forma para guardar a referencia do que o usuario selecionou
     _isGlutenFree = widget.currentFilters['gluten'] as bool;
     _isVegan = widget.currentFilters['vegan'] as bool;
     _isLactoseFree = widget.currentFilters['lactose'] as bool;
@@ -50,13 +51,16 @@ class _FiltersScreenState extends State<FiltersScreen> {
         actions: [
           IconButton(
             onPressed: () {
+              //passamos esse filtro no formato Map<String, bool>
               final selectedFilters = {
                 'gluten': _isGlutenFree,
                 'vegan': _isVegan,
                 'vegetarian': _isVegetarian,
                 'lactose': _isLactoseFree,
               };
-
+              /*usada a keyword widget, pois nosso 
+              filtersHandler não está na classe 
+              State e sim na classe Widget*/
               widget.filtersHandler(selectedFilters);
             },
             icon: Icon(Icons.save),
