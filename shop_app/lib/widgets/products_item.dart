@@ -11,11 +11,36 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //funciona bem dentro de gridviews
-    return GridTile(
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
+    //funciona bem dentro de gridview
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: GridTile(
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+        ),
+        //nova widget aqui
+        footer: GridTileBar(
+          backgroundColor: Colors.black87,
+          leading: IconButton(
+            color: Theme.of(context).accentColor,
+            onPressed: () {},
+            icon: Icon(
+              Icons.favorite,
+            ),
+          ),
+          title: Text(
+            title,
+            textAlign: TextAlign.center,
+          ),
+          trailing: IconButton(
+            color: Theme.of(context).accentColor,
+            onPressed: () {},
+            icon: Icon(
+              Icons.shopping_cart,
+            ),
+          ),
+        ),
       ),
     );
   }
