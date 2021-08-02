@@ -16,8 +16,12 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var product = Provider.of<Product>(context);
+    //deixamos como listen:false, pois só atualizamos o botão de favoritos
+    var product = Provider.of<Product>(context, listen: false);
     //funciona bem dentro de gridview
+
+    //realiza a mesma função do provider acima
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -36,13 +40,17 @@ class ProductItem extends StatelessWidget {
         //nova widget aqui
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            color: Theme.of(context).accentColor,
-            onPressed: () {
-              product.toggleFavorite();
-            },
-            icon: Icon(
-              product.isFavorite ? Icons.favorite : Icons.favorite_border,
+          //usamos o consumder widget no unico lugar que irá mudar
+          //sem reconstruir toda a widget de ProductItem
+          leading: Consumer<Product>(
+            builder: (ctx, product, child) => IconButton(
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                product.toggleFavorite();
+              },
+              icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border,
+              ),
             ),
           ),
           title: Text(

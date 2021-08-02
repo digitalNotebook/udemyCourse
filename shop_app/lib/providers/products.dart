@@ -38,17 +38,38 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  // var _showFavoritesOnly = false;
+
   //usamos um get dessa forma para retornar uma cópia da lista de produtos
   //e não uma referência para essa variavel, pois senão estariamos
   //modificando-a diretamente, porém só podemos chamar o notifyListeners() aqui
   List<Product> get items {
+    //se usarmos dessa forma outras telas verão o container filtrado
+    // if (_showFavoritesOnly) {
+    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // }
     return [..._items];
+  }
+
+  List<Product> get favoritesItems {
+    //já retorna uma cópia não precisamos colocar o [...]
+    return _items.where((productItem) => productItem.isFavorite).toList();
   }
 
   void addProduct() {
     // _items.add(value);
     notifyListeners();
   }
+
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   Product findById(String id) {
     return _items.firstWhere((product) => product.id == id);

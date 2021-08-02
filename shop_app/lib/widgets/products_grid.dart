@@ -5,13 +5,19 @@ import 'products_item.dart';
 import '../providers/products.dart';
 
 class ProductsGrid extends StatelessWidget {
+  final bool showFavs;
+
+  ProductsGrid(this.showFavs);
+
   @override
   Widget build(BuildContext context) {
     //Setamos o provider para verificar o container products
     final productsData = Provider.of<Products>(context);
 
     //usamos o getter que retorna uma cópia da lista
-    final products = productsData.items;
+    final products =
+        showFavs ? productsData.favoritesItems : productsData.items;
+
     return GridView.builder(
       itemCount: products.length,
       //define como o gridview deve ser construído
