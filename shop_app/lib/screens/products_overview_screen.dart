@@ -33,13 +33,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           PopupMenuButton(
             //baseado no enum
             onSelected: (FiltersOptions selectedItem) {
-              if (selectedItem == FiltersOptions.Favorites) {
-                // productsContainer.showFavoritesOnly(); forma antiga
-                _showFavoritesOnly = true;
-              } else {
-                // productsContainer.showAll();
-                _showFavoritesOnly = false;
-              }
+              setState(() {
+                if (selectedItem == FiltersOptions.Favorites) {
+                  // productsContainer.showFavoritesOnly(); forma antiga
+                  _showFavoritesOnly = true;
+                } else {
+                  // productsContainer.showAll();
+                  _showFavoritesOnly = false;
+                }
+              });
             },
             icon: Icon(Icons.more_vert), //3 dots verticais
             itemBuilder: (_) => [
