@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/product.dart';
 
 import '../screens/product_detail_screen.dart';
+import '../providers/cart.dart';
+import '../providers/product.dart';
 
 class ProductItem extends StatelessWidget {
   //Comentamos pois vamos usar o Provider Product
@@ -18,6 +19,9 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     //deixamos como listen:false, pois só atualizamos o botão de favoritos
     var product = Provider.of<Product>(context, listen: false);
+
+    //só vamos adicionar um produto e não atualizar a página
+    var cart = Provider.of<Cart>(context, listen: false);
     //funciona bem dentro de gridview
 
     //realiza a mesma função do provider acima
@@ -59,7 +63,9 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             color: Theme.of(context).accentColor,
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(product.id, product.title, product.price);
+            },
             icon: Icon(
               Icons.shopping_cart,
             ),

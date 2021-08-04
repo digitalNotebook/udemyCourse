@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/widgets/badge.dart';
 
 import '../widgets/products_grid.dart';
 // import 'package:provider/provider.dart';
@@ -33,15 +36,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           PopupMenuButton(
             //baseado no enum
             onSelected: (FiltersOptions selectedItem) {
-              setState(() {
-                if (selectedItem == FiltersOptions.Favorites) {
-                  // productsContainer.showFavoritesOnly(); forma antiga
+              if (selectedItem == FiltersOptions.Favorites) {
+                // productsContainer.showFavoritesOnly(); forma antiga
+                setState(() {
                   _showFavoritesOnly = true;
-                } else {
-                  // productsContainer.showAll();
+                });
+              } else {
+                // productsContainer.showAll();
+                setState(() {
                   _showFavoritesOnly = false;
-                }
-              });
+                });
+              }
             },
             icon: Icon(Icons.more_vert), //3 dots verticais
             itemBuilder: (_) => [
@@ -55,6 +60,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               )
             ],
           ),
+          Consumer<Cart>(
+            builder: (ctx, cart, ch) => Badge(
+              child: ch as IconButton,
+              value: cart.itemCount.toString(),
+            ),
+            child: IconButton(
+              //não será reconstruído quando o carrinho mudar
+              onPressed: () {},
+              icon: Icon(Icons.shopping_cart),
+            ),
+          )
         ],
       ),
       body: ProductsGrid(_showFavoritesOnly),

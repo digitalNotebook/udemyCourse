@@ -25,27 +25,34 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
+  int get itemCount {
+    return _items.length;
+  }
+
   void addItem(String productId, String title, double price) {
     //atualiza o Map com um novo objeto, porém com a qtde adicionada
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
         (existingCartItem) => CartItem(
-            id: existingCartItem.id,
-            title: existingCartItem.title,
-            quantity: existingCartItem.quantity + 1,
-            price: price),
+          id: existingCartItem.id,
+          title: existingCartItem.title,
+          quantity: existingCartItem.quantity + 1,
+          price: price,
+        ),
       );
     } else {
       //cria um novo CartItem()
       _items.putIfAbsent(
-          productId,
-          () => CartItem(
-                id: DateTime.now().toString(),
-                title: title,
-                quantity: 1,
-                price: price,
-              ));
+        productId,
+        () => CartItem(
+          id: DateTime.now().toString(),
+          title: title,
+          quantity: 1,
+          price: price,
+        ),
+      );
     }
+    notifyListeners();
   }
 }
