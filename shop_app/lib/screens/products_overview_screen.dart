@@ -22,9 +22,9 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  var _showFavoritesOnly = false;
   @override
   Widget build(BuildContext context) {
-    var _showFavoritesOnly = false;
     //só estamos interessados em acessar o conteudo do container
     // var productsContainer = Provider.of<Products>(context, listen: false); usamos para demonstrar a forma antiga
 
