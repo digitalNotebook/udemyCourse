@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/orders.dart';
 
 import '../widgets/cart_item.dart';
 import '../providers/cart.dart' show Cart;
@@ -49,7 +50,15 @@ class CartScreen extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      //Consultamos o Map e passamos os CartItem como lista
+                      //Não precisamos ficar ouvindo por mudanças, listen: false
+                      //Limpamos o carrinho
+
+                      Provider.of<Orders>(context, listen: false).addOrdem(
+                          cart.items.values.toList(), cart.totalAmount);
+                      cart.clear();
+                    },
                     child: Text('ORDER NOW'),
                   ),
                 ],
