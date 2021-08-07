@@ -69,7 +69,7 @@ class CartScreen extends StatelessWidget {
             height: 10,
           ),
           Expanded(
-            //uma listview não funciona diretamente na Expanded
+            //uma listview não funciona diretamente na Column
             child: ListView.builder(
               itemBuilder: (ctx, index) => CartItem(
                 cart.items.values.toList()[index].id,
