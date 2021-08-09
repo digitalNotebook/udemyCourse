@@ -44,9 +44,17 @@ class CartItem extends StatelessWidget {
             //lendo o tooltip vemos que o TextButton são os mais comuns aqui
             actions: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
                 child: Text('YES'),
-              )
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+                child: Text('NO'),
+              ),
             ],
           ),
         );
