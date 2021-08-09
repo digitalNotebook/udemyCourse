@@ -70,6 +70,30 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  //removemos a adição mais recente
+  void deleteSingleItem(String productId) {
+    //se a lista NÃO contém este produto, então cancela a execução
+    //do método com return;
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    //checamos se o produto possui mais de uma quantidade
+    //removemos um da quantidade
+    if (_items[productId]!.quantity > 1) {
+      _items.update(
+        productId,
+        (existingProduct) => CartItem(
+            id: existingProduct.id,
+            title: existingProduct.title,
+            quantity: existingProduct.quantity - 1,
+            price: existingProduct.price),
+      );
+    } else {
+      _items.remove(productId);
+    }
+    notifyListeners();
+  }
+
   void clear() {
     _items = {};
     notifyListeners();

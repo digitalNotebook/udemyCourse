@@ -32,6 +32,25 @@ class CartItem extends StatelessWidget {
         alignment: Alignment.centerRight,
       ),
       direction: DismissDirection.endToStart,
+      //requer um retorno do tipo Future<bool>
+      //Podemos fazer o showDialog() retorna um Future<bool>
+      confirmDismiss: (direction) {
+        // return Future.value(true);
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('Do you want to remove the item from the cart?'),
+            //lendo o tooltip vemos que o TextButton são os mais comuns aqui
+            actions: [
+              TextButton(
+                onPressed: () {},
+                child: Text('YES'),
+              )
+            ],
+          ),
+        );
+      },
       onDismissed: (direction) {
         Provider.of<Cart>(context, listen: false).deleteItem(productId);
       },
