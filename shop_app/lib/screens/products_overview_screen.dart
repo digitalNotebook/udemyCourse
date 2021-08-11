@@ -62,6 +62,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               )
             ],
           ),
+          //Modifica o badge do carrinho caso o botão seja pressionado
           Consumer<Cart>(
             builder: (ctx, cart, ch) => Badge(
               child: ch as IconButton,
