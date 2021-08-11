@@ -28,7 +28,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void dispose() {
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
-    _imageUrlController.dispose();
+    _imageUrlFocusNode.dispose();
     _imageUrlController.dispose();
     _imageUrlController.removeListener(_imageUpdateUrl);
 
