@@ -88,6 +88,7 @@ class Cart with ChangeNotifier {
             quantity: existingProduct.quantity - 1,
             price: existingProduct.price),
       );
+      //caso contrário removemos o produto da lista
     } else {
       _items.remove(productId);
     }
