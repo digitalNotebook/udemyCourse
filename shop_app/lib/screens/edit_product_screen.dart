@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/products.dart';
 
 import '../providers/product.dart';
 
@@ -49,6 +51,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    //usar o ModalRoute aqui para edição do Produto
+    super.didChangeDependencies();
+  }
+
   void _imageUpdateUrl() {
     //perceba o r antes das quotes, representa um regular expression pattern
     var urlPattern =
@@ -85,10 +93,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //o método save é fornecido pelo state object da widget
     //ele irá executar um método em cada textformfield
     _form.currentState!.save();
-    print('${_editedProduct.title}');
-    print('${_editedProduct.description}');
-    print('${_editedProduct.price}');
-    print('${_editedProduct.imageUrl}');
+    //feita todas as checagens, adicionamos o produto ao Provider
+    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
