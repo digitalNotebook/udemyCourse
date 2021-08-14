@@ -13,6 +13,7 @@ class UserProductsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //queremos ouvir por atualizações
     var productData = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
