@@ -69,6 +69,24 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  void update(String id, Product newProduct) {
+    //encontramos o indice do produto
+    var prodIndex = _items.indexWhere((prod) => prod.id == id);
+    //testamos para saber se o produto foi encontrado
+    //pois o retorno de não encontrado é -1
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print('product not find');
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
+    notifyListeners();
+  }
+
   // void showFavoritesOnly() {
   //   _showFavoritesOnly = true;
   //   notifyListeners();

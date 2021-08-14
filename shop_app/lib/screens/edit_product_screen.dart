@@ -15,14 +15,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
   //precisamos limpar esses objetos focus ao sair da tela
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
+  final _imageUrlFocusNode = FocusNode();
 
   //criamos um controller para o input da image para exibi-la antes do submit
   final _imageUrlController = TextEditingController();
 
-  final _imageUrlFocusNode = FocusNode();
-
-  //key para o Form
+  //key para o Form para usar no método _saveForm
   final _form = GlobalKey<FormState>();
+
+  //para utilizar no método didChangeDependencies()
+  var _isInit = true;
 
   //para salvar o conteudo do Form, precisamos de um objeto Product
   var _editedProduct = Product(
@@ -33,6 +35,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
     imageUrl: '',
   );
 
+  //mapa para o Produto que será editado
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+
+  //adicionamos um listener para o campo da imagemUrl
   @override
   void initState() {
     _imageUrlController.addListener(_imageUpdateUrl);
@@ -45,15 +56,35 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     _imageUrlFocusNode.dispose();
-    _imageUrlController.dispose();
     _imageUrlController.removeListener(_imageUpdateUrl);
+    _imageUrlController.dispose();
 
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
-    //usar o ModalRoute aqui para edição do Produto
+    //utilizado para não reinicializar o form
+    if (_isInit) {
+      //extraimos o id, antes da execucao do build
+      var productId = ModalRoute.of(context)!.settings.arguments as String;
+      //checamos se existe produto para editar ou se é novo produto
+      if (productId.isNotEmpty) {
+        //consultamos o produto na lista de produtos do Provider
+        _editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        //montamos um novo mapa de produtos definido acima
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          'imageUrl': '',
+        };
+        //não podemos ter initialValue e controller no mesmo form
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -93,8 +124,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //o método save é fornecido pelo state object da widget
     //ele irá executar um método em cada textformfield
     _form.currentState!.save();
-    //feita todas as checagens, adicionamos o produto ao Provider
-    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+
+    //testamos se o produto é um novo produto ou é editado
+    if (_editedProduct.id.isNotEmpty) {
+      Provider.of<Products>(context, listen: false)
+          .update(_editedProduct.id, _editedProduct);
+    } else {
+      //feita todas as checagens, adicionamos o produto ao Provider
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    }
+
     Navigator.of(context).pop();
   }
 
@@ -119,6 +158,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               //não precisa definir um controller, pois este text
               //está ligado ao Form
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 //ao apertar o botão done do softkeyboard, iremos para o próximo campo
                 //devemos controlar qual o próximo campo
@@ -145,6 +185,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 //teclado númerico
@@ -156,11 +197,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    id: '',
+                    id: _editedProduct.id,
                     title: _editedProduct.title,
                     description: _editedProduct.description,
                     price: double.parse(value!),
                     imageUrl: _editedProduct.imageUrl,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
                 validator: (value) {
@@ -177,6 +219,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 //ao apertar enter uma nova linha é criada
@@ -195,11 +238,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                    id: '',
+                    id: _editedProduct.id,
                     title: _editedProduct.title,
                     description: value as String,
                     price: _editedProduct.price,
                     imageUrl: _editedProduct.imageUrl,
+                    isFavorite: _editedProduct.isFavorite,
                   );
                 },
               ),
@@ -235,11 +279,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: '',
+                          id: _editedProduct.id,
                           title: _editedProduct.title,
                           description: _editedProduct.description,
                           price: _editedProduct.price,
                           imageUrl: value as String,
+                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                       onFieldSubmitted: (_) => _saveForm(),
