@@ -67,12 +67,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //utilizado para não reinicializar o form
     if (_isInit) {
       //extraimos o id, antes da execucao do build
-      var productId = ModalRoute.of(context)!.settings.arguments as String;
+      var productId = ModalRoute.of(context)!.settings.arguments;
       //checamos se existe produto para editar ou se é novo produto
-      if (productId.isNotEmpty) {
+      if (productId != null) {
         //consultamos o produto na lista de produtos do Provider
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = Provider.of<Products>(context, listen: false)
+            .findById(productId.toString());
         //montamos um novo mapa de produtos definido acima
         _initValues = {
           'title': _editedProduct.title,
@@ -129,12 +129,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_editedProduct.id.isNotEmpty) {
       Provider.of<Products>(context, listen: false)
           .update(_editedProduct.id, _editedProduct);
+      Navigator.of(context).pop();
     } else {
       //feita todas as checagens, adicionamos o produto ao Provider
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      Provider.of<Products>(context, listen: false)
+          .addProduct(_editedProduct)
+          .then((_) => Navigator.of(context).pop());
     }
-
-    Navigator.of(context).pop();
   }
 
   @override
