@@ -118,7 +118,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   //para capturar as informações do form, vamos usar uma globalkey
   //e atrela-la ao form.
-  void _saveForm() {
+  Future<void> _saveForm() async {
     //executa o validator de todos os campos do form
     var isValid = _form.currentState!.validate();
     if (!isValid) {
@@ -135,6 +135,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     //testamos se o produto é um novo produto ou é editado
     if (_editedProduct.id.isNotEmpty) {
+      //código sincrono
       Provider.of<Products>(context, listen: false)
           .update(_editedProduct.id, _editedProduct);
       //setamos para false para a animação do pop da tela
@@ -144,43 +145,46 @@ class _EditProductScreenState extends State<EditProductScreen> {
       Navigator.of(context).pop();
     } else {
       //feita todas as checagens, adicionamos o produto ao Provider
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
-          //usamos o catchError aqui por conta do throw error do provider
-          //podemos exibir algo ao usuario, pois estamos na widget
-          .catchError(
-        (error) {
-          return showDialog<Null>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text('An error ocurred'),
-              //podemos usar o error.toString() aqui também
-              //porem informações confidenciais podem ser exibidas
-              content: Text('Something went wrong'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text('Okay'),
-                )
-              ],
-            ),
-          );
-        },
-        //o then será executado mesmo se tivermos um erro
-        //porém precisamos esperar o usuario clicar em ok, por isso
-        //usamos o return do showDialog
-      ).then(
-        (_) {
-          //setamos para false para a animação do pop da tela
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
-          Navigator.of(context).pop();
-        },
-      );
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+        //usamos o catchError aqui por conta do throw error do provider
+        //podemos exibir algo ao usuario, pois estamos na widget
+        //   .catchError(
+        // (error) {
+      } catch (error) {
+        await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error ocurred'),
+            //podemos usar o error.toString() aqui também
+            //porem informações confidenciais podem ser exibidas
+            content: Text('Something went wrong'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Okay'),
+              ),
+            ],
+          ),
+        );
+      }
+      //o then será executado mesmo se tivermos um erro
+      //porém precisamos esperar o usuario clicar em ok, por isso
+      //usamos o return do showDialog
+      // ).then(
+      //   (_) {
+       finally {
+        //setamos para false para a animação do pop da tela
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
+        Navigator.of(context).pop();
+      }
     }
   }
 
