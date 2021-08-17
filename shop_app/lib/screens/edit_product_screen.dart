@@ -168,7 +168,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
           );
         },
         //o then será executado mesmo se tivermos um erro
-        //porém precisamos esperar o usuario clicar em ok
+        //porém precisamos esperar o usuario clicar em ok, por isso
+        //usamos o return do showDialog
       ).then(
         (_) {
           //setamos para false para a animação do pop da tela
