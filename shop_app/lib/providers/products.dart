@@ -75,20 +75,32 @@ class Products with ChangeNotifier {
         },
       ),
     )
-        .then((response) {
-      print(json.decode(response.body));
-      final newProduct = Product(
-        //setamos a ID com a ID gerada pelo Firebase
-        id: json.decode(response.body)['name'],
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl,
-      );
-      _items.add(newProduct);
-      // _items.insert(0, newProduct); //insere no inicio da lista
-      notifyListeners();
-    });
+        .then(
+      (response) {
+        print(json.decode(response.body));
+        final newProduct = Product(
+          //setamos a ID com a ID gerada pelo Firebase
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+        _items.add(newProduct);
+        // _items.insert(0, newProduct); //insere no inicio da lista
+        notifyListeners();
+      },
+    ).catchError(
+      (error) {
+        print(error);
+        //podemos enviar este erro para um server analitico, porém
+
+        //com o uso do throw retornamos esse erro
+        //para usar a mesma catchError em outro lugar
+        //no caso na tela de editproducts para exibir um modal ao usuario
+        throw error;
+      },
+    );
   }
 
   void update(String id, Product newProduct) {

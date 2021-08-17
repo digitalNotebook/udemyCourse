@@ -26,6 +26,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   //para utilizar no método didChangeDependencies()
   var _isInit = true;
 
+  //para uso do loadingSpinner
+  var _isLoading = false;
+
   //para salvar o conteudo do Form, precisamos de um objeto Product
   var _editedProduct = Product(
     id: '',
@@ -124,17 +127,59 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //o método save é fornecido pelo state object da widget
     //ele irá executar um método em cada textformfield
     _form.currentState!.save();
+    //setamos para true e o icone de loading passa a ser exibido
+    //por conta do setState que irá rebuildar a tela
+    setState(() {
+      _isLoading = true;
+    });
 
     //testamos se o produto é um novo produto ou é editado
     if (_editedProduct.id.isNotEmpty) {
       Provider.of<Products>(context, listen: false)
           .update(_editedProduct.id, _editedProduct);
+      //setamos para false para a animação do pop da tela
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.of(context).pop();
     } else {
       //feita todas as checagens, adicionamos o produto ao Provider
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .then((_) => Navigator.of(context).pop());
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
+          //usamos o catchError aqui por conta do throw error do provider
+          //podemos exibir algo ao usuario, pois estamos na widget
+          .catchError(
+        (error) {
+          return showDialog<Null>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('An error ocurred'),
+              //podemos usar o error.toString() aqui também
+              //porem informações confidenciais podem ser exibidas
+              content: Text('Something went wrong'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Text('Okay'),
+                )
+              ],
+            ),
+          );
+        },
+        //o then será executado mesmo se tivermos um erro
+        //porém precisamos esperar o usuario clicar em ok
+      ).then(
+        (_) {
+          //setamos para false para a animação do pop da tela
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          Navigator.of(context).pop();
+        },
+      );
     }
   }
 
@@ -150,153 +195,159 @@ class _EditProductScreenState extends State<EditProductScreen> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _form,
-          child: ListView(
-            children: [
-              //não precisa definir um controller, pois este text
-              //está ligado ao Form
-              TextFormField(
-                initialValue: _initValues['title'],
-                decoration: InputDecoration(labelText: 'Title'),
-                //ao apertar o botão done do softkeyboard, iremos para o próximo campo
-                //devemos controlar qual o próximo campo
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  //aponta para o próximo focus, quando o softkeyboard for pressionado
-                  FocusScope.of(context).requestFocus(_priceFocusNode);
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Digite um título';
-                  }
-                  return null;
-                },
-                //atualizamos o produto, com um novo produto e o valor do campo
-                onSaved: (value) {
-                  _editedProduct = Product(
-                    id: '',
-                    title: value as String,
-                    description: _editedProduct.description,
-                    price: _editedProduct.price,
-                    imageUrl: _editedProduct.imageUrl,
-                  );
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['price'],
-                decoration: InputDecoration(labelText: 'Price'),
-                textInputAction: TextInputAction.next,
-                //teclado númerico
-                keyboardType: TextInputType.number,
-                //atrelamos o focusNode criado acima
-                focusNode: _priceFocusNode,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
-                },
-                onSaved: (value) {
-                  _editedProduct = Product(
-                    id: _editedProduct.id,
-                    title: _editedProduct.title,
-                    description: _editedProduct.description,
-                    price: double.parse(value!),
-                    imageUrl: _editedProduct.imageUrl,
-                    isFavorite: _editedProduct.isFavorite,
-                  );
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Insira um número';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Digite um número válido';
-                  }
-                  if (double.parse(value) <= 0) {
-                    return 'Digite um valor maior que zero.';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['description'],
-                decoration: InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-                //ao apertar enter uma nova linha é criada
-                keyboardType: TextInputType.multiline,
-                //aqui não teremos a troca de foco, pois não sabemos quando o usuário
-                //irá trocar de campo
-                focusNode: _descriptionFocusNode,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Insira uma descrição';
-                  }
-                  if (value.length < 10) {
-                    return 'Insira uma descrição com mais de 10 caracteres';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _editedProduct = Product(
-                    id: _editedProduct.id,
-                    title: _editedProduct.title,
-                    description: value as String,
-                    price: _editedProduct.price,
-                    imageUrl: _editedProduct.imageUrl,
-                    isFavorite: _editedProduct.isFavorite,
-                  );
-                },
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  //image preview container
-                  Container(
-                    width: 100,
-                    height: 100,
-                    margin: EdgeInsets.only(top: 8, right: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey, width: 1),
-                    ),
-                    child: _imageUrlController.text.isEmpty
-                        ? Text('Enter a URL')
-                        : FittedBox(
-                            child: Image.network(_imageUrlController.text),
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Image URL'),
-                      keyboardType: TextInputType.url,
-                      //vamos submeter esse form
-                      textInputAction: TextInputAction.done,
-                      controller: _imageUrlController,
-                      focusNode: _imageUrlFocusNode,
-                      onEditingComplete: () {
-                        setState(() {});
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _form,
+                child: ListView(
+                  children: [
+                    //não precisa definir um controller, pois este text
+                    //está ligado ao Form
+                    TextFormField(
+                      initialValue: _initValues['title'],
+                      decoration: InputDecoration(labelText: 'Title'),
+                      //ao apertar o botão done do softkeyboard, iremos para o próximo campo
+                      //devemos controlar qual o próximo campo
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        //aponta para o próximo focus, quando o softkeyboard for pressionado
+                        FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
-
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Digite um título';
+                        }
+                        return null;
+                      },
+                      //atualizamos o produto, com um novo produto e o valor do campo
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: '',
+                          title: value as String,
+                          description: _editedProduct.description,
+                          price: _editedProduct.price,
+                          imageUrl: _editedProduct.imageUrl,
+                        );
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _initValues['price'],
+                      decoration: InputDecoration(labelText: 'Price'),
+                      textInputAction: TextInputAction.next,
+                      //teclado númerico
+                      keyboardType: TextInputType.number,
+                      //atrelamos o focusNode criado acima
+                      focusNode: _priceFocusNode,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
+                      },
                       onSaved: (value) {
                         _editedProduct = Product(
                           id: _editedProduct.id,
                           title: _editedProduct.title,
                           description: _editedProduct.description,
-                          price: _editedProduct.price,
-                          imageUrl: value as String,
+                          price: double.parse(value!),
+                          imageUrl: _editedProduct.imageUrl,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
-                      onFieldSubmitted: (_) => _saveForm(),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Insira um número';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Digite um número válido';
+                        }
+                        if (double.parse(value) <= 0) {
+                          return 'Digite um valor maior que zero.';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                ],
+                    TextFormField(
+                      initialValue: _initValues['description'],
+                      decoration: InputDecoration(labelText: 'Description'),
+                      maxLines: 3,
+                      //ao apertar enter uma nova linha é criada
+                      keyboardType: TextInputType.multiline,
+                      //aqui não teremos a troca de foco, pois não sabemos quando o usuário
+                      //irá trocar de campo
+                      focusNode: _descriptionFocusNode,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Insira uma descrição';
+                        }
+                        if (value.length < 10) {
+                          return 'Insira uma descrição com mais de 10 caracteres';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: _editedProduct.id,
+                          title: _editedProduct.title,
+                          description: value as String,
+                          price: _editedProduct.price,
+                          imageUrl: _editedProduct.imageUrl,
+                          isFavorite: _editedProduct.isFavorite,
+                        );
+                      },
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        //image preview container
+                        Container(
+                          width: 100,
+                          height: 100,
+                          margin: EdgeInsets.only(top: 8, right: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                          ),
+                          child: _imageUrlController.text.isEmpty
+                              ? Text('Enter a URL')
+                              : FittedBox(
+                                  child:
+                                      Image.network(_imageUrlController.text),
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: InputDecoration(labelText: 'Image URL'),
+                            keyboardType: TextInputType.url,
+                            //vamos submeter esse form
+                            textInputAction: TextInputAction.done,
+                            controller: _imageUrlController,
+                            focusNode: _imageUrlFocusNode,
+                            onEditingComplete: () {
+                              setState(() {});
+                            },
+
+                            onSaved: (value) {
+                              _editedProduct = Product(
+                                id: _editedProduct.id,
+                                title: _editedProduct.title,
+                                description: _editedProduct.description,
+                                price: _editedProduct.price,
+                                imageUrl: value as String,
+                                isFavorite: _editedProduct.isFavorite,
+                              );
+                            },
+                            onFieldSubmitted: (_) => _saveForm(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
