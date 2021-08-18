@@ -59,6 +59,24 @@ class Products with ChangeNotifier {
     return _items.where((productItem) => productItem.isFavorite).toList();
   }
 
+  Future<void> fetchAndSetProducts() async {
+    final url = Uri.https(
+        'shop-app-b6bd5-default-rtdb.firebaseio.com', 'products.json');
+    /*essa requisição pode falhar, então usamos o try-catch
+    e repassamos o erro para ser manipulado na widget para exibir informação
+    ao usuário */
+    try {
+      var response = await http.get(url);
+      //checar o retorno do firebase
+      print(json.decode(response.body));
+      /*sabemos que o Firebase retorna um Map<String, Map<>>
+       porém o Dart não reconhece o Map de Map por isso usamos dynamic*/
+      var extractedData = json.decode(response.body) as Map<String, dynamic>;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   Future<void> addProduct(Product product) async {
     final url = Uri.https(
         'shop-app-b6bd5-default-rtdb.firebaseio.com', 'products.json');

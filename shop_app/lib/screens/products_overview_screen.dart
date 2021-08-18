@@ -6,6 +6,7 @@ import '../providers/cart.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/badge.dart';
 import '../widgets/app_drawer.dart';
+import '../providers/products.dart';
 // import 'package:provider/provider.dart';
 // import '../providers/products.dart';
 
@@ -25,6 +26,28 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showFavoritesOnly = false;
+  var _isInit = true;
+
+  @override
+  initState() {
+    // Provider.of<Products>(context).fetchAndSetProducts(); //WON'T WORK
+    // Provider.of<Products>(context, listen: false).fetchAndSetProducts(); //WORK
+    //Não executa imediamente apesar o Duration.zero
+    Future.delayed(Duration.zero).then(
+      (value) => Provider.of<Products>(context).fetchAndSetProducts(),
+    );
+    super.initState();
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   if (_isInit) {
+  //     Provider.of<Products>(context).fetchAndSetProducts();
+  //   }
+  //   _isInit = false;
+  //   super.didChangeDependencies();
+  // }
+
   @override
   Widget build(BuildContext context) {
     //só estamos interessados em acessar o conteudo do container
