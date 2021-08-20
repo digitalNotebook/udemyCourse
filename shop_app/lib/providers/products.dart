@@ -66,12 +66,29 @@ class Products with ChangeNotifier {
     e repassamos o erro para ser manipulado na widget para exibir informação
     ao usuário */
     try {
-      var response = await http.get(url);
+      final response = await http.get(url);
       //checar o retorno do firebase
       print(json.decode(response.body));
       /*sabemos que o Firebase retorna um Map<String, Map<>>
        porém o Dart não reconhece o Map de Map por isso usamos dynamic*/
-      var extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
+      final List<Product> loadedProducts = [];
+      /*executamos uma iteração para cada map
+      e adicionamos a variável a uma lista temporária.
+      */
+      extractedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          imageUrl: prodData['imageUrl'],
+          isFavorite: prodData['isFavorite'],
+        ));
+      });
+      _items = loadedProducts;
+      notifyListeners();
     } catch (error) {
       throw error;
     }
