@@ -71,6 +71,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_isInit) {
       //extraimos o id, antes da execucao do build
       var productId = ModalRoute.of(context)!.settings.arguments;
+      print('ProductID: $productId');
       //checamos se existe produto para editar ou se é novo produto
       if (productId != null) {
         //consultamos o produto na lista de produtos do Provider
@@ -135,14 +136,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     //testamos se o produto é um novo produto ou é editado
     if (_editedProduct.id.isNotEmpty) {
-      //código sincrono
-      Provider.of<Products>(context, listen: false)
+      //codigo assincrono, envolver com try-catch
+      await Provider.of<Products>(context, listen: false)
           .update(_editedProduct.id, _editedProduct);
       //setamos para false para a animação do pop da tela
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
     } else {
       //feita todas as checagens, adicionamos o produto ao Provider
       try {
@@ -176,16 +173,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
       //usamos o return do showDialog
       // ).then(
       //   (_) {
-       finally {
-        //setamos para false para a animação do pop da tela
-        setState(
-          () {
-            _isLoading = false;
-          },
-        );
-        Navigator.of(context).pop();
-      }
+      //  finally {
+      //   //setamos para false para a animação do pop da tela
+      //   setState(
+      //     () {
+      //       _isLoading = false;
+      //     },
+      //   );
+      //   Navigator.of(context).pop();
+      // }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   @override
@@ -231,7 +232,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       //atualizamos o produto, com um novo produto e o valor do campo
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: '',
+                          id: _editedProduct.id,
                           title: value as String,
                           description: _editedProduct.description,
                           price: _editedProduct.price,

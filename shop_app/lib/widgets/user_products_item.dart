@@ -13,6 +13,8 @@ class UserProductsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //para a snackBar da deleção devido ao Future
+    var scaffold = ScaffoldMessenger.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -35,8 +37,17 @@ class UserProductsItem extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: () {
-                Provider.of<Products>(context, listen: false).deleteProduct(id);
+              onPressed: () async {
+                try {
+                  await Provider.of<Products>(context, listen: false)
+                      .deleteProduct(id);
+                } catch (error) {
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text('Deleting Failed!'),
+                    ),
+                  );
+                }
               },
               icon: Icon(Icons.delete),
               color: Theme.of(context).errorColor,
