@@ -72,13 +72,17 @@ class Products with ChangeNotifier {
       print(json.decode(response.body));
       /*sabemos que o Firebase retorna um Map<String, Map<>>
        porém o Dart não reconhece o Map de Map por isso usamos dynamic*/
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final productsJson = json.decode(response.body) as Map<String, dynamic>;
+
+      if (productsJson.isEmpty) {
+        return;
+      }
 
       final List<Product> loadedProducts = [];
       /*executamos uma iteração para cada map
       e adicionamos a variável a uma lista temporária.
       */
-      extractedData.forEach((prodId, prodData) {
+      productsJson.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
           title: prodData['title'],
@@ -91,7 +95,7 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
-      throw error;
+      HttpException('Could not connect');
     }
   }
 

@@ -49,18 +49,7 @@ class CartScreen extends StatelessWidget {
                               ?.color),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      //Consultamos o Map e passamos os CartItem como lista
-                      //Não precisamos ficar ouvindo por mudanças, listen: false
-                      //Limpamos o carrinho
-
-                      Provider.of<Orders>(context, listen: false).addOrdem(
-                          cart.items.values.toList(), cart.totalAmount);
-                      cart.clear();
-                    },
-                    child: Text('ORDER NOW'),
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -83,6 +72,49 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
+      //se nada foi adicionado ao carrinho ou estiver carregando, desabilitamos o botão
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              //entramos em modo de carga para exibir o loadingSpinner
+              setState(() {
+                _isLoading = true;
+              });
+              //Consultamos o Map e passamos os CartItem como lista
+              //Não precisamos ficar ouvindo por mudanças, listen: false
+              //Aguardamos a requisição POST
+              await Provider.of<Orders>(context, listen: false).addOrdem(
+                  widget.cart.items.values.toList(), widget.cart.totalAmount);
+              //saimos do modo de carga para deixar de exibir o loadingSpinner
+              setState(() {
+                _isLoading = false;
+              });
+              //Limpamos o carrinho
+              widget.cart.clear();
+            },
     );
   }
 }
