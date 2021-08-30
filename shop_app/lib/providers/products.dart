@@ -42,6 +42,10 @@ class Products with ChangeNotifier {
     // ),
   ];
 
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
   // var _showFavoritesOnly = false;
 
   //usamos um get dessa forma para retornar uma cópia da lista de produtos
@@ -62,7 +66,8 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.https(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com', 'products.json');
+        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken',
+        'products.json');
     /*essa requisição pode falhar, então usamos o try-catch
     e repassamos o erro para ser manipulado na widget para exibir informação
     ao usuário */
