@@ -8,7 +8,7 @@ import '../models/http_exception.dart';
 class Auth with ChangeNotifier {
   //este token a cada 1 hora pelo Firebase (mecanismo de segurança)
 
-  String? _token;
+  String _token = '';
   DateTime? _expiryDate;
   late String _userId;
   late String _password;
@@ -17,7 +17,7 @@ class Auth with ChangeNotifier {
     return token != '';
   }
 
-  String? get token {
+  String get token {
     if (_expiryDate != null) {
       if (_expiryDate!.isAfter(DateTime.now())) {
         if (_token != null) {

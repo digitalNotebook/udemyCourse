@@ -65,9 +65,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.https(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken',
-        'products.json');
+    final url = Uri.parse(
+        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken/products.json');
     /*essa requisição pode falhar, então usamos o try-catch
     e repassamos o erro para ser manipulado na widget para exibir informação
     ao usuário */
