@@ -104,8 +104,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.https(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com', 'products.json');
+    final url = Uri.parse(
+        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken/products.json');
     try {
       //codigo que provalvemente pode falhar
       final response = await http.post(
@@ -147,7 +147,7 @@ class Products with ChangeNotifier {
     //encontramos o indice do produto
     print('ID DO UPDATE: $id');
     final url = Uri.parse(
-        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
     var prodIndex = _items.indexWhere((prod) => prod.id == id);
     //testamos para saber se o produto foi encontrado
     //pois o retorno de não encontrado é -1
@@ -174,7 +174,7 @@ class Products with ChangeNotifier {
   //antes de deletar um item, o copiamos
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
 
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);

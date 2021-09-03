@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../screens/product_detail_screen.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   //Comentamos pois vamos usar o Provider Product
@@ -22,6 +23,8 @@ class ProductItem extends StatelessWidget {
 
     //só vamos adicionar um produto e não atualizar a página
     var cart = Provider.of<Cart>(context, listen: false);
+
+    var authData = Provider.of<Auth>(context, listen: false);
     //funciona bem dentro de gridview
 
     //realiza a mesma função do provider acima
@@ -50,7 +53,7 @@ class ProductItem extends StatelessWidget {
             builder: (ctx, product, child) => IconButton(
               color: Theme.of(context).accentColor,
               onPressed: () {
-                product.toggleFavorite();
+                product.toggleFavorite(authData.token);
               },
               icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,

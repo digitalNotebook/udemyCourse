@@ -21,14 +21,17 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String token;
+
+  Orders(this.token, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url =
-        Uri.https('shop-app-b6bd5-default-rtdb.firebaseio.com', 'orders.json');
+    final url = Uri.parse(
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/orders.json=auth=$token');
     //fazemos a requisição para o Firebase
     var response = await http.get(url);
     //criamos uma lista vazia para ser preenchida
@@ -69,8 +72,9 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrdem(List<CartItem> cartProducts, double total) async {
-    final url =
-        Uri.https('shop-app-b6bd5-default-rtdb.firebaseio.com', 'orders.json');
+    final url = Uri.parse(
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/orders.json=auth=$token');
+
     //usamos o mesmo timestamp para o http e a gravação local
     final timestamp = DateTime.now();
     //colocar o bloco try-catch

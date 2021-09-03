@@ -28,18 +28,20 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String token, String userId) async {
     //fazemos uma cópia do status antigo
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     final url = Uri.parse(
-        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$token');
     try {
       //somente o GET E O POST CAEM NO CATCH, OS DEMAIS SÃO VALIDADOS COM HTTP STATUS
-      var response = await http.patch(
+      //VAMOS ATUALIZAR TO DO O CONJUNTO COM O PUT, JÁ COM O PATCH, PODEMOS ATUALIZAR PARCIALMENTE UM SUBCONJUNTO
+
+      var response = await http.put(
         url,
         body: json.encode(
-          {'isFavorite': isFavorite},
+          isFavorite,
         ),
       );
       if (response.statusCode >= 400) {
