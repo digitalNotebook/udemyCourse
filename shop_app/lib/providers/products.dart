@@ -42,9 +42,10 @@ class Products with ChangeNotifier {
     // ),
   ];
 
-  final String authToken;
+  final String _authToken;
+  final String _userId;
 
-  Products(this.authToken, this._items);
+  Products(this._authToken, this._items, this._userId);
 
   // var _showFavoritesOnly = false;
 
@@ -64,9 +65,11 @@ class Products with ChangeNotifier {
     return _items.where((productItem) => productItem.isFavorite).toList();
   }
 
-  Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken/products.json');
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterStringUri =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$_userId"' : '';
+    var url = Uri.parse(
+        'shop-app-b6bd5-default-rtdb.firebaseio.com/products.json?auth=$_authToken&$filterStringUri');
     /*essa requisição pode falhar, então usamos o try-catch
     e repassamos o erro para ser manipulado na widget para exibir informação
     ao usuário */
@@ -81,6 +84,12 @@ class Products with ChangeNotifier {
       if (productsJson.isEmpty) {
         return;
       }
+      //após checarmos se existem produtos, vamos verificar quais são os favoritos desse usuário
+      url = Uri.parse(
+          'https://shop-app-b6bd5-default-rtdb.firebaseio.com/userFavorites/$_userId.json?auth=$_authToken');
+
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
 
       final List<Product> loadedProducts = [];
       /*executamos uma iteração para cada map
@@ -93,7 +102,11 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavorite: prodData['isFavorite'],
+          /*setamos baseado na requisição dos favoritos
+          se favoriteData is null, então é false, porém se o produtoId não existir
+          ele é falso também*/
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
       });
       _items = loadedProducts;
@@ -105,7 +118,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$authToken/products.json');
+        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$_authToken/products.json');
     try {
       //codigo que provalvemente pode falhar
       final response = await http.post(
@@ -116,7 +129,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite,
+            'creatorId': _userId,
           },
         ),
       );
@@ -147,7 +160,7 @@ class Products with ChangeNotifier {
     //encontramos o indice do produto
     print('ID DO UPDATE: $id');
     final url = Uri.parse(
-        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$_authToken');
     var prodIndex = _items.indexWhere((prod) => prod.id == id);
     //testamos para saber se o produto foi encontrado
     //pois o retorno de não encontrado é -1
@@ -174,7 +187,7 @@ class Products with ChangeNotifier {
   //antes de deletar um item, o copiamos
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products/$id.json?auth=$_authToken');
 
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);

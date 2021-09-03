@@ -13,6 +13,7 @@ class Auth with ChangeNotifier {
   late String _userId;
   late String _password;
 
+  //checamos se o token está vazio, se sim o usuário não está autenticado
   bool get isAuth {
     return token != '';
   }
@@ -30,13 +31,13 @@ class Auth with ChangeNotifier {
 
   String get userId {
     //talvez fazer checagens antes de retornar
-    return userId;
+    return _userId;
   }
 
   Future<void> _authenticate(
       String email, String pass, String urlSegment) async {
     final url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=[KEY_API]');
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=[API_KEY]');
     try {
       final response = await http.post(
         url,
