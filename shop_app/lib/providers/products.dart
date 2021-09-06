@@ -69,7 +69,7 @@ class Products with ChangeNotifier {
     final filterStringUri =
         filterByUser ? 'orderBy="creatorId"&equalTo="$_userId"' : '';
     var url = Uri.parse(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com/products.json?auth=$_authToken&$filterStringUri');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products.json?auth=$_authToken&$filterStringUri');
     /*essa requisição pode falhar, então usamos o try-catch
     e repassamos o erro para ser manipulado na widget para exibir informação
     ao usuário */
@@ -118,7 +118,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'shop-app-b6bd5-default-rtdb.firebaseio.com?auth=$_authToken/products.json');
+        'https://shop-app-b6bd5-default-rtdb.firebaseio.com/products.json?auth=$_authToken');
     try {
       //codigo que provalvemente pode falhar
       final response = await http.post(
