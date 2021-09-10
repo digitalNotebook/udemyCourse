@@ -26,9 +26,13 @@ class ProductDetailScreen extends StatelessWidget {
             Container(
               height: 300,
               width: double.infinity,
-              child: Image.network(
-                loadedProduct.imageUrl,
+              child: FadeInImage(
                 fit: BoxFit.cover,
+                placeholder:
+                    AssetImage('assets/images/product-placeholder.png'),
+                image: NetworkImage(
+                  loadedProduct.imageUrl,
+                ),
               ),
             ),
             //vamos adicionar um espço (altura)
