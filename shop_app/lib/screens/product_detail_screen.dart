@@ -26,12 +26,11 @@ class ProductDetailScreen extends StatelessWidget {
             Container(
               height: 300,
               width: double.infinity,
-              child: FadeInImage(
-                fit: BoxFit.cover,
-                placeholder:
-                    AssetImage('assets/images/product-placeholder.png'),
-                image: NetworkImage(
+              child: Hero(
+                tag: loadedProduct.id,
+                child: Image.network(
                   loadedProduct.imageUrl,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
