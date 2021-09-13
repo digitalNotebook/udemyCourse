@@ -16,17 +16,20 @@ class ProductDetailScreen extends StatelessWidget {
       listen: false,
     ).findById(productId);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loadedProduct.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //vamos apresentar a imagem
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Hero(
+      // appBar: AppBar(
+      //   title: Text(loadedProduct.title),
+      // ),
+      body: CustomScrollView(
+        //areas na tela que irão scrollar
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300, //a mesma do container
+            pinned: true, //appbar always visible
+            //o que teremos dentro da appbar
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(loadedProduct.title),
+              // a parte que veremos se a appbar for expandida
+              background: Hero(
                 tag: loadedProduct.id,
                 child: Image.network(
                   loadedProduct.imageUrl,
@@ -34,33 +37,43 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            //vamos adicionar um espço (altura)
-            SizedBox(
-              height: 10,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                //vamos adicionar um espço (altura)
+                SizedBox(
+                  height: 10,
+                ),
+                //um texto que irá exibir o preço (podemos definir o style com o Theme)
+                Text(
+                  '\$${loadedProduct.price}',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                //exibe a descrição em um container com quebra de linha
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    loadedProduct.description,
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                  ),
+                ),
+                SizedBox(
+                  height: 600,
+                ),
+              ],
             ),
-            //um texto que irá exibir o preço (podemos definir o style com o Theme)
-            Text(
-              '\$${loadedProduct.price}',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            //exibe a descrição em um container com quebra de linha
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                loadedProduct.description,
-                textAlign: TextAlign.center,
-                softWrap: true,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
