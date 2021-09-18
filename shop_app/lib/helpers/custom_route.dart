@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//usamos para single routes on fly creation
 class CustomRoute<T> extends MaterialPageRoute<T> {
   CustomRoute({
     required WidgetBuilder builder,
@@ -29,6 +30,7 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
   }
 }
 
+//usamos para afetar a transição de todas as routes
 class CustomPageTransitionBuilder extends PageTransitionsBuilder {
   //podemos setar nossa própria animação sobreescrevendo este método
   @override
