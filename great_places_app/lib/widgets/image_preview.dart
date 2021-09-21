@@ -11,14 +11,14 @@ class ImagePreview extends StatefulWidget {
 
 class _ImagePreviewState extends State<ImagePreview> {
   //vamos gerenciar a imagem com essa variavel
-  late File _storedImage;
+  File? _storedImage;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
-          width: 100,
+          width: 150,
           height: 100,
           decoration: BoxDecoration(
             border: Border.all(
@@ -28,7 +28,7 @@ class _ImagePreviewState extends State<ImagePreview> {
           ),
           child: _storedImage != null
               ? Image.file(
-                  _storedImage,
+                  _storedImage!,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 )
