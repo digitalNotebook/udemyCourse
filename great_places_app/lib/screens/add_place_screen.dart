@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/image_preview.dart';
+import '../providers/great_places.dart';
 
 class AddPlacesScreen extends StatefulWidget {
   const AddPlacesScreen({Key? key}) : super(key: key);
@@ -13,11 +17,32 @@ class AddPlacesScreen extends StatefulWidget {
 
 class _AddPlacesScreenState extends State<AddPlacesScreen> {
   final _titleController = TextEditingController();
+  File? _pickedImage;
 
   @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
+  }
+
+  //passado como referencia para a widget image_preview
+  void _selectImage(File pickedImage) {
+    _pickedImage = pickedImage;
+  }
+
+  void _savePlace() {
+    //como usamos o textfield sem o form, não temos o validator e
+    //não mostramos nenhuma mensagem de erro
+    if (_titleController.text.isEmpty || _pickedImage == null) {
+      return;
+    }
+    //queremos apenas dispatch the action, por isso o listen: false
+    Provider.of<GreatPlaces>(context, listen: false).addPlace(
+      _titleController.text,
+      _pickedImage!,
+    );
+    //Feita a adição, voltamos para a página inicial
+    Navigator.of(context).pop();
   }
 
   @override
@@ -48,14 +73,14 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
                       height: 10,
                     ),
                     //Criamos uma widget que representa o imagePreview
-                    ImagePreview(),
+                    ImagePreview(onSelectedImage: _selectImage),
                   ],
                 ),
               ),
             ),
           ),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: _savePlace,
             icon: Icon(Icons.add),
             label: Text('Add'),
             style: ButtonStyle(
@@ -66,7 +91,7 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
               //remove as margens que são clicaveis
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-          )
+          ),
         ],
       ),
     );

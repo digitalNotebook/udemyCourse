@@ -3,7 +3,7 @@ import 'dart:io';
 class Place {
   final String id;
   final String title;
-  final PlaceLocation location;
+  final PlaceLocation? location;
   final File image;
 
   Place({
