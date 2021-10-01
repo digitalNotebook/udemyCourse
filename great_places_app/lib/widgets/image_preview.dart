@@ -32,9 +32,11 @@ class _ImagePreviewState extends State<ImagePreview> {
       source: ImageSource.camera,
       maxWidth: 600,
     );
+
     setState(() {
       _storedImage = File(pickImage!.path);
     });
+    if (_storedImage != null) return;
     //capturamos o caminho do diretorio onde podemos armazenar essa imagem
     var appDir = await syspaths.getApplicationDocumentsDirectory();
     //capturamos o nome gerado para a imagem
@@ -44,7 +46,7 @@ class _ImagePreviewState extends State<ImagePreview> {
 
     print(fileName);
     //executamos a referencia da função de addPlaceScreen
-    if (_storedImage != null) widget.onSelectedImage(_storedImage);
+    widget.onSelectedImage(_storedImage);
   }
 
   @override
