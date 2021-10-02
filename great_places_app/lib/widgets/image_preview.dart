@@ -36,7 +36,7 @@ class _ImagePreviewState extends State<ImagePreview> {
     setState(() {
       _storedImage = File(pickImage!.path);
     });
-    if (_storedImage != null) return;
+    if (_storedImage == null) return;
     //capturamos o caminho do diretorio onde podemos armazenar essa imagem
     var appDir = await syspaths.getApplicationDocumentsDirectory();
     //capturamos o nome gerado para a imagem
