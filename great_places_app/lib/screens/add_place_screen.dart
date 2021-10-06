@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/image_preview.dart';
 import '../providers/great_places.dart';
+import '../widgets/location_input.dart';
 
 class AddPlacesScreen extends StatefulWidget {
   const AddPlacesScreen({Key? key}) : super(key: key);
@@ -74,6 +75,10 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
                     ),
                     //Criamos uma widget que representa o imagePreview
                     ImagePreview(onSelectedImage: _selectImage),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    LocationInput(),
                   ],
                 ),
               ),
