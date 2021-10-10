@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyA9oDvffVfUyOLZZLBN9LpCDusk-aue9Zc';
+const API_KEY = 'API_KEY';
 
 class LocationHelper {
   //retornamos uma URL que representa uma imagem estática do mapa com base nas informações do Google

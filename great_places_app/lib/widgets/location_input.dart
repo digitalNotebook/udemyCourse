@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:great_places_app/screens/map_screen.dart';
 
 import 'package:location/location.dart';
 import '../helpers/location_helpers.dart';
@@ -47,6 +48,21 @@ class _LocationInputState extends State<LocationInput> {
     });
   }
 
+  Future<void> _selectOnMap() async {
+    final selectedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        //muda a animação e substitui o voltar por um cross
+        fullscreenDialog: true,
+        builder: (ctx) => MapScreen(
+          isSelecting: true,
+        ),
+      ),
+    );
+    if (selectedLocation == null) {
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -82,7 +98,7 @@ class _LocationInputState extends State<LocationInput> {
               label: Text('Currrent Location'),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: _selectOnMap,
               icon: Icon(Icons.map),
               label: Text('Select on Map'),
             ),
