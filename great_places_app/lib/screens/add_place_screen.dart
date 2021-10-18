@@ -46,6 +46,8 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
     Navigator.of(context).pop();
   }
 
+  void _selectPlace(double lat, double lng) {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +80,7 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
                     SizedBox(
                       height: 15,
                     ),
-                    LocationInput(),
+                    LocationInput(_selectPlace),
                   ],
                 ),
               ),

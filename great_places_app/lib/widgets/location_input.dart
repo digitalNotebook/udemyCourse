@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:great_places_app/screens/map_screen.dart';
 
 import 'package:location/location.dart';
 import '../helpers/location_helpers.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({Key? key}) : super(key: key);
+  final Function onSelectedPlace;
+
+  const LocationInput(this.onSelectedPlace, {Key? key}) : super(key: key);
 
   @override
   _LocationInputState createState() => _LocationInputState();
@@ -46,10 +49,35 @@ class _LocationInputState extends State<LocationInput> {
     setState(() {
       _previewImageUrl = staticImageUrl;
     });
+
+    widget.onSelectedPlace(_locationData.latitude, _locationData.latitude);
   }
 
+  // Future<bool> _getPermission() async {
+  //   bool _serviceEnabled;
+  //   PermissionStatus _permissionGranted;
+
+  //   _serviceEnabled = await location.serviceEnabled();
+  //   if (!_serviceEnabled) {
+  //     _serviceEnabled = await location.requestService();
+  //     if (!_serviceEnabled) {
+  //       return;
+  //     }
+  //   }
+
+  //   _permissionGranted = await location.hasPermission();
+  //   if (_permissionGranted == PermissionStatus.denied) {
+  //     _permissionGranted = await location.requestPermission();
+  //     if (_permissionGranted != PermissionStatus.granted) {
+  //       return;
+  //     }
+  //   }
+
+  // }
+
   Future<void> _selectOnMap() async {
-    final selectedLocation = await Navigator.of(context).push(
+    //sabemos que o selectedLocation é LatLng, por conta do pop de MapScreen e setamos no push
+    final selectedLocation = await Navigator.of(context).push<LatLng>(
       MaterialPageRoute(
         //muda a animação e substitui o voltar por um cross
         fullscreenDialog: true,
@@ -61,6 +89,7 @@ class _LocationInputState extends State<LocationInput> {
     if (selectedLocation == null) {
       return;
     }
+    print(selectedLocation.latitude);
   }
 
   @override
