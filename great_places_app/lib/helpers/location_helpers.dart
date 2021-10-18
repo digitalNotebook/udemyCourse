@@ -20,6 +20,7 @@ class LocationHelper {
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$API_KEY');
     //usamos o package http para fazer a request
     var response = await http.get(url);
+    print(json.decode(response.body));
     //o resultado é em JSON e pegamos o endereço mais relevante
     return json.decode(response.body)['results'][0]['formatted_address'];
   }

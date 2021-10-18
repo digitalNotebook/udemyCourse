@@ -89,7 +89,8 @@ class _LocationInputState extends State<LocationInput> {
     if (selectedLocation == null) {
       return;
     }
-    print(selectedLocation.latitude);
+    widget.onSelectedPlace(
+        selectedLocation.latitude, selectedLocation.longitude);
   }
 
   @override

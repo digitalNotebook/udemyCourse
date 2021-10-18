@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:great_places_app/helpers/location_helpers.dart';
 
 import '../helpers/db_helpers.dart';
 import '../models/place.dart';
@@ -12,12 +13,24 @@ class GreatPlaces with ChangeNotifier {
     return [..._items];
   }
 
-  void addPlace(String title, File image) {
+  Future<void> addPlace(
+      String title, File image, PlaceLocation pickedLocation) async {
+    //Para o location usamos o LocationHelper para traduzir a latidude e longitude
+    final placeAddress = await LocationHelper.getPlaceAddress(
+      pickedLocation.latitude,
+      pickedLocation.longitude,
+    );
+    //criamos um novo objeto passando o endereço do http request para a API do Google
+    final updatedLocation = PlaceLocation(
+      latitude: pickedLocation.latitude,
+      longitude: pickedLocation.longitude,
+      address: placeAddress,
+    );
     //criamos um novo Place
     var newPlace = Place(
       id: DateTime.now().toString(),
       title: title,
-      location: null,
+      location: updatedLocation,
       image: image,
     );
     _items.add(newPlace);
@@ -29,6 +42,9 @@ class GreatPlaces with ChangeNotifier {
         'id': newPlace.id,
         'title': newPlace.title,
         'image_path': newPlace.image.path,
+        'loc_lat': newPlace.location!.latitude,
+        'loc_lng': newPlace.location!.longitude,
+        'address': newPlace.location!.address,
       },
     );
   }
@@ -44,7 +60,11 @@ class GreatPlaces with ChangeNotifier {
             id: item['id'],
             title: item['title'],
             image: File(item['image_path']),
-            location: null,
+            location: PlaceLocation(
+              latitude: item['loc_lat'],
+              longitude: item['loc_lng'],
+              address: item['address'],
+            ),
           ),
         )
         .toList();

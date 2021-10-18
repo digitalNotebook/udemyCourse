@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:great_places_app/models/place.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/image_preview.dart';
@@ -19,6 +20,7 @@ class AddPlacesScreen extends StatefulWidget {
 class _AddPlacesScreenState extends State<AddPlacesScreen> {
   final _titleController = TextEditingController();
   File? _pickedImage;
+  PlaceLocation? _pickedLocation;
 
   @override
   void dispose() {
@@ -31,22 +33,24 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
     _pickedImage = pickedImage;
   }
 
+  void _selectPlace(double lat, double lng) {
+    _pickedLocation = PlaceLocation(latitude: lat, longitude: lng);
+  }
+
   void _savePlace() {
     //como usamos o textfield sem o form, não temos o validator e
     //não mostramos nenhuma mensagem de erro
-    if (_titleController.text.isEmpty || _pickedImage == null) {
+    if (_titleController.text.isEmpty ||
+        _pickedImage == null ||
+        _pickedLocation == null) {
       return;
     }
     //queremos apenas dispatch the action, por isso o listen: false
-    Provider.of<GreatPlaces>(context, listen: false).addPlace(
-      _titleController.text,
-      _pickedImage!,
-    );
+    Provider.of<GreatPlaces>(context, listen: false)
+        .addPlace(_titleController.text, _pickedImage!, _pickedLocation!);
     //Feita a adição, voltamos para a página inicial
     Navigator.of(context).pop();
   }
-
-  void _selectPlace(double lat, double lng) {}
 
   @override
   Widget build(BuildContext context) {

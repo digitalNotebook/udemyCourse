@@ -19,7 +19,7 @@ class DBHelpers {
       onCreate: (db, version) {
         //executamos esse SQL na primeira execução de todas
         return db.execute(
-          'CREATE TABLE places(id TEXT PRIMARY KEY, title TEXT, image_path TEXT)',
+          'CREATE TABLE places(id TEXT PRIMARY KEY, title TEXT, image_path TEXT, loc_lat REAL, loc_lng REAL, address TEXT)',
         );
       },
       //trabalhamos sempre com a mesma versão do banco de dados
