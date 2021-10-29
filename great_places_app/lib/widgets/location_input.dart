@@ -17,6 +17,21 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   String? _previewImageUrl;
 
+  //refatoramos para evitar a repetição do código
+  void _showPreview(double? lat, double? lng) {
+    if (lat == null || lng == null) {
+      return;
+    }
+
+    final staticImageUrl = LocationHelper.generateLocationPreviewImage(
+      latitude: lat,
+      longitude: lng,
+    );
+    setState(() {
+      _previewImageUrl = staticImageUrl;
+    });
+  }
+
   Future<void> _getCurrentUserLocation() async {
     Location location = new Location();
 
@@ -40,17 +55,17 @@ class _LocationInputState extends State<LocationInput> {
       }
     }
 
-    _locationData = await location.getLocation();
-
-    final staticImageUrl = LocationHelper.generateLocationPreviewImage(
-      latitude: _locationData.latitude,
-      longitude: _locationData.longitude,
-    );
-    setState(() {
-      _previewImageUrl = staticImageUrl;
-    });
-
-    widget.onSelectedPlace(_locationData.latitude, _locationData.latitude);
+    //podemos ter um erro e por isso usamos o try-catch
+    try {
+      _locationData = await location.getLocation();
+      _showPreview(
+        _locationData.latitude,
+        _locationData.longitude,
+      );
+      widget.onSelectedPlace(_locationData.latitude, _locationData.longitude);
+    } catch (error) {
+      return;
+    }
   }
 
   // Future<bool> _getPermission() async {
@@ -89,6 +104,10 @@ class _LocationInputState extends State<LocationInput> {
     if (selectedLocation == null) {
       return;
     }
+    _showPreview(
+      selectedLocation.latitude,
+      selectedLocation.longitude,
+    );
     widget.onSelectedPlace(
         selectedLocation.latitude, selectedLocation.longitude);
   }
