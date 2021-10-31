@@ -13,6 +13,10 @@ class GreatPlaces with ChangeNotifier {
     return [..._items];
   }
 
+  Place findById(String id) {
+    return _items.firstWhere((place) => place.id == id);
+  }
+
   Future<void> addPlace(
       String title, File image, PlaceLocation pickedLocation) async {
     //Para o location usamos o LocationHelper para traduzir a latidude e longitude
