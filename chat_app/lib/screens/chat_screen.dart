@@ -35,7 +35,13 @@ class _ChatScreenState extends State<ChatScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          FirebaseFirestore.instance.collection('collection_here').add(
+            {
+              'text': 'This was added by clicking the button',
+            },
+          );
+        },
         child: Icon(Icons.add),
       ),
     );
