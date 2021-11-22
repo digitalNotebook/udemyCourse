@@ -10,11 +10,22 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  //vamos associar ao botão
+  var _isLogin = true;
+
+  var _userName = '';
+  var _userPassword = '';
+  var _userEmail = '';
+
+  //vamos associar ao botão para ativar o validador dos textfields do form
   void _trySubmit() {
     final isValid = _formKey.currentState!.validate();
+    //fecha o softkeyboard
+    FocusScope.of(context).unfocus();
 
-    if (isValid) {}
+    if (isValid) {
+      //irá chamar o onSaved de cada textfield
+      _formKey.currentState!.save();
+    }
   }
 
   @override
@@ -32,6 +43,7 @@ class _AuthFormState extends State<AuthForm> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
+                    key: ValueKey('email'),
                     validator: (value) {
                       //return string se houver erro, retorna null se tud ok
                       if (value!.isEmpty || !value.contains('@')) {
@@ -41,19 +53,28 @@ class _AuthFormState extends State<AuthForm> {
                     },
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(labelText: 'Email Address'),
-                  ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 4) {
-                        return 'The user should be at least 4 characters';
-                      }
-                      return null;
+                    onSaved: (value) {
+                      _userEmail = value!;
                     },
-                    decoration: InputDecoration(
-                      labelText: 'User',
-                    ),
                   ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: ValueKey('user'),
+                      validator: (value) {
+                        if (value!.isEmpty || value.length < 4) {
+                          return 'The user should be at least 4 characters';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'User',
+                      ),
+                      onSaved: (value) {
+                        _userName = value!;
+                      },
+                    ),
                   TextFormField(
+                    key: ValueKey('password'),
                     validator: (value) {
                       if (value!.isEmpty || value.length < 7) {
                         return 'The password should be at least 7 characters';
@@ -62,13 +83,25 @@ class _AuthFormState extends State<AuthForm> {
                     },
                     decoration: InputDecoration(labelText: 'Password'),
                     obscureText: true,
+                    onSaved: (value) {
+                      _userPassword = value!;
+                    },
                   ),
                   SizedBox(
                     height: 12,
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text('Login')),
+                  ElevatedButton(
+                    onPressed: () {
+                      _isLogin = !_isLogin;
+                    },
+                    child: Text(_isLogin ? 'Login' : 'Signup'),
+                  ),
                   TextButton(
-                      onPressed: () {}, child: Text('Create new account')),
+                    onPressed: _trySubmit,
+                    child: Text(_isLogin
+                        ? 'Create new account'
+                        : 'I already have an account'),
+                  ),
                 ],
               ),
             ),
