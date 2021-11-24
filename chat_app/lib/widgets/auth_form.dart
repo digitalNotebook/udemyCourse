@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  final void Function(String email, String pass, String user, bool isLogin)
-      submitFn;
+  final void Function(
+    String email,
+    String pass,
+    String user,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitFn;
 
   const AuthForm(this.submitFn, {Key? key}) : super(key: key);
 
@@ -29,10 +34,11 @@ class _AuthFormState extends State<AuthForm> {
       //irá chamar o onSaved de cada textfield
       _formKey.currentState!.save();
       widget.submitFn(
-        _userEmail,
-        _userPassword,
-        _userName,
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
         _isLogin,
+        context,
       );
     }
   }
