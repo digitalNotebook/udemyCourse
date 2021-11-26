@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,8 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  var _isLoading = false;
+
   //INSTANCIA GERENCIADA PELO FIREBASE
   final _auth = FirebaseAuth.instance;
 
@@ -24,6 +27,11 @@ class _AuthScreenState extends State<AuthScreen> {
   ) async {
     UserCredential authResult;
     try {
+      setState(
+        () {
+          _isLoading = true;
+        },
+      );
       if (isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
           email: email,
@@ -32,6 +40,17 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email, password: pass);
+
+        //armazenamos a informação no firestore e exibimos um loading spinner
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(authResult.user!.uid)
+            .set(
+          {
+            'username': user,
+            'email': email,
+          },
+        );
       }
     } on PlatformException catch (error) {
       var message = "An error ocurred, please check your credentials";
@@ -45,8 +64,18 @@ class _AuthScreenState extends State<AuthScreen> {
           backgroundColor: Theme.of(ctx).errorColor,
         ),
       );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
     } catch (err) {
       print(err);
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
     }
   }
 
@@ -54,7 +83,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: AuthForm(_submitAuthForm),
+      body: AuthForm(_submitAuthForm, _isLoading),
     );
   }
 }
