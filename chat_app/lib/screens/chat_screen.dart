@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,13 +16,45 @@ class _ChatScreenState extends State<ChatScreen> {
     // CollectionReference messages =
     //     FirebaseFirestore.instance.collection('messages');
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Chat'),
+        actions: [
+          DropdownButton(
+            icon: Icon(Icons.more_vert,
+                color: Theme.of(context).primaryIconTheme.color),
+            items: [
+              DropdownMenuItem(
+                child: Container(
+                  child: Row(
+                    children: [
+                      Icon(Icons.exit_to_app),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('Logout'),
+                    ],
+                  ),
+                ),
+                value: 'Logout',
+              ),
+            ],
+            onChanged: (itemIdentifier) {
+              if (itemIdentifier == 'logout') {
+                FirebaseAuth.instance.signOut();
+              }
+            },
+          )
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('collection_here')
             .snapshots(),
         builder: (ctx, streamSnapshot) {
           if (streamSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           var document = streamSnapshot.data!.docs;
@@ -29,7 +62,9 @@ class _ChatScreenState extends State<ChatScreen> {
             itemCount: document.length,
             itemBuilder: (ctx, index) => Container(
               padding: EdgeInsets.all(8),
-              child: Text(document[index]['text']),
+              child: Text(
+                document[index]['text'],
+              ),
             ),
           );
         },
