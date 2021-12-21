@@ -31,6 +31,7 @@ class _NewMessageState extends State<NewMessage> {
           ),
           IconButton(
             color: Theme.of(context).primaryColor,
+            //o botão só fica disponível quando uma letra for digitada
             onPressed: _enteredMessage.trim().isEmpty ? null : () {},
             icon: Icon(Icons.send),
           )
